@@ -6,7 +6,6 @@ import (
 	"bluebell/pkg/jwt"
 	"bluebell/pkg/response"
 	"errors"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -28,7 +27,7 @@ func SignUpHandler(c *gin.Context) {
 	})
 
 	if errors.Is(err, mysql.ErrorUserExit) {
-		response.Error(c, response.CodeUserNotExist)
+		response.Error(c, response.CodeUserExist)
 		return
 	}
 
@@ -44,6 +43,7 @@ func LoginHandler(c *gin.Context) {
 	var u models.User
 	if err := c.ShouldBindJSON(&u); err != nil {
 		zap.L().Error("invalid params", zap.Error(err))
+		response.Error(c, response.CodeInvalidParams)
 		return
 	}
 
@@ -63,37 +63,37 @@ func LoginHandler(c *gin.Context) {
 	})
 }
 
-func RefreshTokenHandler(c *gin.Context) {
-	rt := c.Query("refreshToken")
-	// 客户端携带Token有三种方式 1.放在请求头 2.放在请求体 3.放在URI
-	// 这里假设Token放在Header的Authorization中，并使用Bearer开头
-	// 这里的具体实现方式要依据你的实际业务情况决定
-	authHeader := c.Request.Header.Get("Authorization")
-	if authHeader == "" {
-		response.ErrorWithMsg(c, response.CodeInvalidToken, "缺少请求头auth token")
-		c.Abort()
-		return
-	}
+// func RefreshTokenHandler(c *gin.Context) {
+// 	rt := c.Query("refreshToken")
+// 	// 客户端携带Token有三种方式 1.放在请求头 2.放在请求体 3.放在URI
+// 	// 这里假设Token放在Header的Authorization中，并使用Bearer开头
+// 	// 这里的具体实现方式要依据你的实际业务情况决定
+// 	authHeader := c.Request.Header.Get("Authorization")
+// 	if authHeader == "" {
+// 		response.ErrorWithMsg(c, response.CodeInvalidToken, "缺少请求头auth token")
+// 		c.Abort()
+// 		return
+// 	}
 
-	//按空格分割
-	parts := strings.SplitN(authHeader, " ", 2)
-	if !(len(parts) == 2 && parts[0] == "Bearer") {
-		response.ErrorWithMsg(c, response.CodeInvalidToken, "token 格式不对")
-		c.Abort()
-		return
-	}
+// 	//按空格分割
+// 	parts := strings.SplitN(authHeader, " ", 2)
+// 	if !(len(parts) == 2 && parts[0] == "Bearer") {
+// 		response.ErrorWithMsg(c, response.CodeInvalidToken, "token 格式不对")
+// 		c.Abort()
+// 		return
+// 	}
 
-	aToken, rToken, err := jwt.RefreshToken(parts[1], rt)
+// 	aToken, rToken, err := jwt.RefreshToken(parts[1], rt)
 
-	if err != nil {
-		response.ErrorWithMsg(c, response.CodeInvalidToken, "token 解析失败")
-		c.Abort()
-		return
-	}
+// 	if err != nil {
+// 		response.ErrorWithMsg(c, response.CodeInvalidToken, "token 解析失败")
+// 		c.Abort()
+// 		return
+// 	}
 
-	response.Success(c, gin.H{
-		"access_token":  aToken,
-		"refresh_token": rToken,
-	})
+// 	response.Success(c, gin.H{
+// 		"access_token":  aToken,
+// 		"refresh_token": rToken,
+// 	})
 
-}
+// }

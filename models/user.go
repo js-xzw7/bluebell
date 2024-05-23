@@ -1,14 +1,31 @@
 package models
 
 import (
+	"bluebell/pkg/crypto"
+	"bluebell/pkg/sonyflake"
 	"encoding/json"
 	"errors"
+
+	"gorm.io/gorm"
 )
 
 type User struct {
-	UserId   uint64 `json:"user_id" db:"user_id"`
-	UserName string `json:"username" db:"username"`
-	Password string `json:"password" db:"password"`
+	gorm.Model
+	UserId   uint64 `json:"userId" gorm:"column:user_id;"`
+	UserName string `json:"username" gorm:"unique;column:username; type:varchar(64); not null;"`
+	Password string `json:"password" gorm:"column:password; type:varchar(64); not null;"`
+}
+
+func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+	userId, err := sonyflake.GetId()
+	if err != nil {
+		return
+	}
+
+	password := crypto.Encrypt(u.Password)
+	u.UserId = userId
+	u.Password = password
+	return
 }
 
 func (u *User) UnmarshalJSON(data []byte) (err error) {

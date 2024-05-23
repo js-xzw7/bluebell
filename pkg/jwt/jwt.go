@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -12,11 +13,11 @@ import (
 // 我们这里需要额外记录一个UserId字段，所以要自定义结构体
 // 如果想要保存更多的信息，都可以添加到这个结构体中
 type MyClaims struct {
-	UserId uint64 `json:"user_id"`
+	UserId uint64 `json:"userId"`
 	jwt.StandardClaims
 }
 
-var mySecret = []byte("www.jsxz.com")
+var mySecret = []byte("bluebell")
 
 func keyFunc(_ *jwt.Token) (i interface{}, err error) {
 	return mySecret, nil
@@ -28,21 +29,26 @@ func GenToken(userId uint64) (aToken, rToken string, err error) {
 		userId,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 8).Unix(),
-			Issuer:    "jsxz", //签发人
+			Issuer:    "bluebell", //签发人
 		},
 	}
 
 	//加密并获的完整的编码后的字符串token
-	aToken, err = jwt.NewWithClaims(jwt.SigningMethodES256, myClaims).SignedString(mySecret)
+	aToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, myClaims).SignedString(mySecret)
 	if err != nil {
+		fmt.Printf("GenToken err:%v \n", err)
 		return
 	}
 
 	//refresh token 不需要任何自定字段
-	rToken, err = jwt.NewWithClaims(jwt.SigningMethodES256, jwt.StandardClaims{
+	rToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		ExpiresAt: time.Now().Add(time.Hour * 24 * 7).Unix(),
-		Issuer:    "jsxz",
+		Issuer:    "bluebell",
 	}).SignedString(mySecret)
+
+	if err != nil {
+		fmt.Printf("GenToken err:%v \n", err)
+	}
 
 	return
 }

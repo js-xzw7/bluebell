@@ -13,7 +13,7 @@ func SetupRouter() *gin.Engine {
 	v1 := r.Group("/api/v1")
 	v1.POST("/login", controller.LoginHandler)
 	v1.POST("/signup", controller.SignUpHandler)
-	v1.GET("/refresh_token", controller.RefreshTokenHandler)
+	// v1.GET("/refreshToken", controller.RefreshTokenHandler)
 
 	v1.Use(auth.JWTAuthMiddleware())
 	r.NoRoute(func(c *gin.Context) {

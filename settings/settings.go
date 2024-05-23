@@ -15,6 +15,7 @@ type Appconfig struct {
 	*LogConfig   `mapstructure:"log"`
 	*RedisConfig `mapstructure:"redis"`
 	*MySQLConfig `mapstructure:"mysql"`
+	Secret       string `mapstructure:"secret"`
 }
 
 type MySQLConfig struct {

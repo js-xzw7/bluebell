@@ -2,56 +2,31 @@ package mysql
 
 import (
 	"bluebell/models"
-	"bluebell/pkg/sonyflake"
-	"crypto/md5"
+	"bluebell/pkg/crypto"
 	"database/sql"
-	"encoding/hex"
 )
 
-const secret = "jszxw7.com"
-
-func encryptPassword(data []byte) string {
-	h := md5.New()
-	h.Write([]byte(secret))
-	h.Write(data)
-	return hex.EncodeToString(h.Sum(nil))
-}
-
 func Register(user *models.User) (err error) {
-	sqlStr := "select count(user_id) from user where username = ?; "
-
+	//判断用户是否存在
 	var count int64
-	err = db.Get(&count, sqlStr, user.UserName)
-	if err != nil && err != sql.ErrNoRows {
-		return
-	}
-
+	db.Model(&models.User{}).Where("username = ?", user.UserName).Count(&count)
 	if count > 0 {
 		//用户已存在
 		return ErrorUserExit
 	}
 
-	userId, err := sonyflake.GetId()
-
-	if err != nil {
-		return ErrorGenIDFailed
+	result := db.Create(user)
+	if result.Error != nil {
+		return ErrorInsertFailed
 	}
-
-	//生成加密密码
-	password := encryptPassword([]byte(user.Password))
-	//插入用户
-	sqlStr = "insert into user(user_id,username,password) values (?,?,?)"
-	_, err = db.Exec(sqlStr, userId, user.UserName, password)
-
 	return
 }
 
 func Login(user *models.User) (err error) {
 	originPassword := user.Password
 
-	sqlStr := "select user_id, username, password form user where username = ?"
-	err = db.Get(user, sqlStr, user.UserName)
-	if err != nil && err != sql.ErrNoRows {
+	row := db.Where("username = ?", user.UserName).First(&user)
+	if row.Error != nil && row.Error != sql.ErrNoRows {
 		return
 	}
 
@@ -60,7 +35,7 @@ func Login(user *models.User) (err error) {
 	}
 
 	//生成机密密码比较
-	password := encryptPassword([]byte(originPassword))
+	password := crypto.Encrypt(originPassword)
 	if password != user.Password {
 		return ErrorPasswordWrong
 	}
@@ -68,16 +43,17 @@ func Login(user *models.User) (err error) {
 	return
 }
 
-func GetuserById(idStr string) (user *models.User, err error) {
-	sqlStr := "select * from user where id = ?"
-	err = db.Get(user, sqlStr, idStr)
-	if err != nil && err != sql.ErrNoRows {
-		return
-	}
+// func GetuserById(idStr string) (user *models.User, err error) {
+// 	sqlStr := "select * from user where id = ?"
+// 	row := db.QueryRow(sqlStr, idStr)
+// 	err = row.Scan(user)
+// 	if err != nil && err != sql.ErrNoRows {
+// 		return
+// 	}
 
-	if err == sql.ErrNoRows {
-		return nil, ErrorUserNotExit
-	}
+// 	if err == sql.ErrNoRows {
+// 		return nil, ErrorUserNotExit
+// 	}
 
-	return
-}
+// 	return
+// }
