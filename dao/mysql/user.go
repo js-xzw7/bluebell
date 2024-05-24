@@ -9,7 +9,7 @@ import (
 func Register(user *models.User) (err error) {
 	//判断用户是否存在
 	var count int64
-	db.Model(&models.User{}).Where("name = ?", user.UserName).Count(&count)
+	db.Model(&models.User{}).Where("name = ?", user.Name).Count(&count)
 	if count > 0 {
 		//用户已存在
 		return ErrorUserExit
@@ -25,7 +25,7 @@ func Register(user *models.User) (err error) {
 func Login(user *models.User) (err error) {
 	originPassword := user.Password
 
-	row := db.Where("name = ?", user.UserName).First(&user)
+	row := db.Where("name = ?", user.Name).First(&user)
 	if row.Error != nil && row.Error != sql.ErrNoRows {
 		return
 	}

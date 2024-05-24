@@ -22,7 +22,7 @@ func SignUpHandler(c *gin.Context) {
 
 	//3.注册用户
 	err := mysql.Register(&models.User{
-		UserName: refo.UserName,
+		Name:     refo.Name,
 		Password: refo.Password,
 	})
 
@@ -58,8 +58,8 @@ func LoginHandler(c *gin.Context) {
 	response.Success(c, gin.H{
 		"accessToken":  aToken,
 		"refreshToken": rToken,
-		"userID":       u.Id,
-		"username":     u.UserName,
+		"iD":           u.Id,
+		"name":         u.Name,
 	})
 }
 
