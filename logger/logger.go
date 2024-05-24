@@ -13,13 +13,6 @@ var Logger *zap.Logger
 
 func Init(cfg *settings.LogConfig, mode string) (err error) {
 
-	// l := new(zapcore.Level)
-	// err = l.UnmarshalText([]byte(cfg.Level))
-
-	// if err != nil {
-	// 	return err
-	// }
-
 	var core zapcore.Core
 	if mode == "dev" {
 		//进入开发模式，日志输出终端
@@ -47,8 +40,6 @@ func Init(cfg *settings.LogConfig, mode string) (err error) {
 			zapcore.NewCore(encoder, accesswriteSyncer, infoLevel),
 			zapcore.NewCore(encoder, errorwriteSyncer, errorLevel),
 		)
-
-		// core = zapcore.NewCore(encoder, writeSyncer, l)
 	}
 
 	Logger = zap.New(core, zap.AddCaller())
