@@ -5,15 +5,18 @@ import (
 	"bluebell/pkg/sonyflake"
 	"encoding/json"
 	"errors"
+	"time"
 
 	"gorm.io/gorm"
 )
 
 type User struct {
-	gorm.Model
-	UserId   uint64 `json:"userId" gorm:"column:user_id;"`
-	UserName string `json:"username" gorm:"unique;column:username; type:varchar(64); not null;"`
-	Password string `json:"password" gorm:"column:password; type:varchar(64); not null;"`
+	Id        uint64         `json:"id" gorm:"column:id;primarykey"`
+	UserName  string         `json:"username" gorm:"unique;column:name; type:varchar(64); not null;"`
+	Password  string         `json:"password" gorm:"column:password; type:varchar(64); not null;"`
+	CreatedAt time.Time      `json:"-" gorm:"column:created_at; autoCreateTime"`
+	UpdatedAt time.Time      `json:"-" gorm:"column:updated_at; autoUpdateTime"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
@@ -23,7 +26,7 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 	}
 
 	password := crypto.Encrypt(u.Password)
-	u.UserId = userId
+	u.Id = userId
 	u.Password = password
 	return
 }

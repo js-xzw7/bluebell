@@ -54,11 +54,11 @@ func LoginHandler(c *gin.Context) {
 	}
 
 	//生成token
-	aToken, rToken, _ := jwt.GenToken(u.UserId)
+	aToken, rToken, _ := jwt.GenToken(u.Id)
 	response.Success(c, gin.H{
 		"accessToken":  aToken,
 		"refreshToken": rToken,
-		"userID":       u.UserId,
+		"userID":       u.Id,
 		"username":     u.UserName,
 	})
 }
