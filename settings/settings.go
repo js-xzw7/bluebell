@@ -10,8 +10,8 @@ import (
 var Conf = new(Appconfig)
 
 type Appconfig struct {
-	Mode         string `mapstructure: "mode"`
-	Port         int    `mapstructure: "port"`
+	Mode         string `mapstructure:"mode"`
+	Port         int    `mapstructure:"port"`
 	*LogConfig   `mapstructure:"log"`
 	*RedisConfig `mapstructure:"redis"`
 	*MySQLConfig `mapstructure:"mysql"`
@@ -38,11 +38,12 @@ type RedisConfig struct {
 }
 
 type LogConfig struct {
-	Level      string `mapstructure:"level"`
-	Filename   string `mapstructure:"filename"`
-	MaxSize    int    `mapstructure:"max_size"`
-	MaxAge     int    `mapstructure:"max_age"`
-	MaxBackups int    `mapstructure:"max_backups"`
+	Level         string `mapstructure:"level"`
+	AccessLogFile string `mapstructure:"access_log_file"`
+	ErrorLogFile  string `mapstructure:"error_log_file"`
+	MaxSize       int    `mapstructure:"max_size"`
+	MaxAge        int    `mapstructure:"max_age"`
+	MaxBackups    int    `mapstructure:"max_backups"`
 }
 
 func Init() error {

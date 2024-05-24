@@ -8,6 +8,8 @@ import (
 	"bluebell/routers"
 	"bluebell/settings"
 	"fmt"
+
+	"go.uber.org/zap"
 )
 
 func main() {
@@ -42,7 +44,7 @@ func main() {
 	r := routers.SetupRouter()
 	address := fmt.Sprintf(":%d", settings.Conf.Port)
 	if err := r.Run(address); err != nil {
-		fmt.Printf("run server failed, err:%v\n", err)
+		zap.L().Info("run server failed", zap.Error(err))
 		return
 	}
 }

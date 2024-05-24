@@ -9,7 +9,8 @@ import (
 )
 
 func SetupRouter() *gin.Engine {
-	r := gin.Default()
+	// r := gin.Default()
+	r := gin.New()
 	v1 := r.Group("/api/v1")
 	v1.POST("/login", controller.LoginHandler)
 	v1.POST("/signup", controller.SignUpHandler)

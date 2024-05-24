@@ -9,32 +9,50 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var lg *zap.Logger
+var Logger *zap.Logger
 
 func Init(cfg *settings.LogConfig, mode string) (err error) {
-	writeSyncer := getLogWriter(cfg.Filename, cfg.MaxSize, cfg.MaxBackups, cfg.MaxAge)
-	encoder := getEncoder()
-	l := new(zapcore.Level)
-	err = l.UnmarshalText([]byte(cfg.Level))
 
-	if err != nil {
-		return err
-	}
+	// l := new(zapcore.Level)
+	// err = l.UnmarshalText([]byte(cfg.Level))
+
+	// if err != nil {
+	// 	return err
+	// }
 
 	var core zapcore.Core
 	if mode == "dev" {
 		//进入开发模式，日志输出终端
 		consoleEncoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
 		core = zapcore.NewTee(
-			zapcore.NewCore(encoder, writeSyncer, l),
+			// zapcore.NewCore(encoder, writeSyncer, l),
 			zapcore.NewCore(consoleEncoder, zapcore.Lock(os.Stdout), zapcore.DebugLevel),
 		)
 	} else {
-		core = zapcore.NewCore(encoder, writeSyncer, l)
+
+		//进入生产模式，日志输出文件
+		infoLevel := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+			return lvl == zapcore.InfoLevel || lvl == zapcore.WarnLevel
+		})
+
+		errorLevel := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+			return lvl == zapcore.ErrorLevel || lvl == zapcore.PanicLevel || lvl == zapcore.FatalLevel
+		})
+
+		accesswriteSyncer := getLogWriter(cfg.AccessLogFile, cfg.MaxSize, cfg.MaxBackups, cfg.MaxAge)
+		errorwriteSyncer := getLogWriter(cfg.ErrorLogFile, cfg.MaxSize, cfg.MaxBackups, cfg.MaxAge)
+		encoder := getEncoder()
+
+		core = zapcore.NewTee(
+			zapcore.NewCore(encoder, accesswriteSyncer, infoLevel),
+			zapcore.NewCore(encoder, errorwriteSyncer, errorLevel),
+		)
+
+		// core = zapcore.NewCore(encoder, writeSyncer, l)
 	}
 
-	lg = zap.New(core, zap.AddCaller())
-	zap.ReplaceGlobals(lg)
+	Logger = zap.New(core, zap.AddCaller())
+	zap.ReplaceGlobals(Logger)
 	zap.L().Info("log init success")
 	return
 }
