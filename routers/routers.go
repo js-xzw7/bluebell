@@ -2,6 +2,7 @@ package routers
 
 import (
 	"bluebell/controller"
+	"bluebell/middleware"
 	"bluebell/middleware/auth"
 	"net/http"
 
@@ -11,6 +12,7 @@ import (
 func SetupRouter() *gin.Engine {
 	// r := gin.Default()
 	r := gin.New()
+	r.Use(middleware.Zap())
 	v1 := r.Group("/api/v1")
 	v1.POST("/login", controller.LoginHandler)
 	v1.POST("/signup", controller.SignUpHandler)
