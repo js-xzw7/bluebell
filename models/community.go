@@ -23,3 +23,14 @@ type CommunityDetail struct {
 	UpdatedAt    time.Time      `json:"-" gorm:"column:updated_at; autoUpdateTime"`
 	DeletedAt    gorm.DeletedAt `json:"-" gorm:"index"`
 }
+
+type CreateCommunityRequest struct {
+	Name         string `json:"name" binding:"required"`
+	Introduction string `json:"introduction" binding:"required"`
+}
+
+type CommunityInfo struct {
+	Id           uint64 `json:"id"`
+	Name         string `json:"name"`
+	Introduction string `json:"introduction"`
+}

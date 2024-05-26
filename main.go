@@ -2,7 +2,6 @@ package main
 
 import (
 	"bluebell/dao/mysql"
-	"bluebell/dao/redis"
 	"bluebell/logger"
 	"bluebell/pkg/sonyflake"
 	"bluebell/routers"
@@ -30,11 +29,11 @@ func main() {
 		return
 	}
 
-	if err := redis.Init(*settings.Conf.RedisConfig); err != nil {
-		fmt.Printf("init redis failed, err:%v\n", err)
-		return
-	}
-	defer redis.Close()
+	// if err := redis.Init(*settings.Conf.RedisConfig); err != nil {
+	// 	fmt.Printf("init redis failed, err:%v\n", err)
+	// 	return
+	// }
+	// defer redis.Close()
 
 	if err := sonyflake.Init(1); err != nil {
 		fmt.Printf("init sonyflake failed, err:%v\n", err)
