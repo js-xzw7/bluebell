@@ -17,9 +17,15 @@ func SetupRouter() *gin.Engine {
 	v1.POST("/login", controller.LoginHandler)
 	v1.POST("/signup", controller.SignUpHandler)
 	// v1.GET("/refreshToken", controller.RefreshTokenHandler)
+
 	v1.POST("/addCommunity", controller.AddCommunityHandler)
 	v1.GET("/getCommunityList", controller.GetCommunityListHandler)
 	v1.GET("/getCommunityById", controller.GetCommunityByIdHandler)
+
+	v1.POST("/addPost", controller.AddPostHandler)
+	v1.GET("/getPostById", controller.GetPostByIdHandler)
+	v1.POST("/getPostListByIds", controller.GetPostListByIdsHandler)
+	v1.GET("/getPostList", controller.GetPostListHandler)
 
 	v1.Use(auth.JWTAuthMiddleware())
 	r.NoRoute(func(c *gin.Context) {
