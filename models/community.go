@@ -25,12 +25,12 @@ type CommunityDetail struct {
 }
 
 type CreateCommunityRequest struct {
-	Name         string `json:"name" binding:"required"`
-	Introduction string `json:"introduction" binding:"required"`
+	Name         string `form:"name" binding:"required"`
+	Introduction string `form:"introduction" binding:"required"`
 }
 
 type CommunityInfo struct {
-	Id           uint64 `json:"id"`
-	Name         string `json:"name"`
-	Introduction string `json:"introduction"`
+	Id           uint64 `json:"id" form:"id" binding:"omitempty"`
+	Name         string `json:"name" form:"name" binding:"omitempty"`
+	Introduction string `json:"introduction" form:"introduction" binding:"omitempty"`
 }
