@@ -58,7 +58,7 @@ func LoginHandler(c *gin.Context) {
 	response.Success(c, gin.H{
 		"accessToken":  aToken,
 		"refreshToken": rToken,
-		"iD":           u.Id,
+		"Id":           u.Id,
 		"name":         u.Name,
 	})
 }

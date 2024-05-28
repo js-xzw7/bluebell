@@ -11,7 +11,7 @@ import (
 )
 
 type User struct {
-	Id        uint64         `json:"id" gorm:"column:id;primarykey"`
+	Id        uint64         `json:"id" gorm:"column:id;primarykey; type:bigint(20)"`
 	Name      string         `json:"name" gorm:"unique;column:name; type:varchar(64); not null;"`
 	Password  string         `json:"password" gorm:"column:password; type:varchar(64); not null;"`
 	CreatedAt time.Time      `json:"-" gorm:"column:created_at; autoCreateTime"`
