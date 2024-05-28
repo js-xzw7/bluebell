@@ -1,6 +1,7 @@
 package models
 
 import (
+	"bluebell/pkg/sonyflake"
 	"time"
 
 	"gorm.io/gorm"
@@ -17,11 +18,20 @@ type Community struct {
 }
 
 type CommunityDetail struct {
-	CommunityId  uint64         `json:"communityId" gorm:"cloumn:community_id; type:bingint(20); not null; comment:社区id(外键关联community表)"`
-	Introduction string         `json:"introduction" gorm:"cloumn:introduction; type:varchar(200); comment:社区简介"`
+	CommunityId  uint64         `json:"communityId" gorm:"column:community_id; type:bigint(20); not null; comment:社区id(外键关联community表)"`
+	Introduction string         `json:"introduction" gorm:"column:introduction; type:varchar(200); comment:社区简介"`
 	CreatedAt    time.Time      `json:"-" gorm:"column:created_at; autoCreateTime"`
 	UpdatedAt    time.Time      `json:"-" gorm:"column:updated_at; autoUpdateTime"`
 	DeletedAt    gorm.DeletedAt `json:"-" gorm:"index"`
+}
+
+func (c *Community) BeforeCreate(tx *gorm.DB) (err error) {
+	id, err := sonyflake.GetId()
+	if err != nil {
+		return
+	}
+	c.Id = id
+	return
 }
 
 type CreateCommunityRequest struct {
