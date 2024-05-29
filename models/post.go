@@ -21,12 +21,12 @@ type Post struct {
 }
 
 type PostReq struct {
-	Id          uint64 `json:"id" binding:"omitempty"`
-	Title       string `json:"title" binding:"required"`
-	Content     string `json:"content"  binding:"required"`
-	AuthorId    uint64 `json:"authorId"  binding:"required"`
-	CommunityId uint64 `json:"communityId"  binding:"required"`
-	Status      int32  `json:"status"  binding:"omitempty"`
+	Id          uint64 `json:"id" form:"id" binding:"omitempty"`
+	Title       string `json:"title" form:"title" binding:"omitempty"`
+	Content     string `json:"content" form:"content"  binding:"omitempty"`
+	AuthorId    uint64 `json:"authorId" form:"authorId" binding:"omitempty"`
+	CommunityId uint64 `json:"communityId" form:"communityId"  binding:"omitempty"`
+	Status      int32  `json:"status" form:"status" binding:"omitempty"`
 }
 
 type PostIds struct {

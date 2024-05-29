@@ -70,7 +70,7 @@ func GetPostListByIdsHandler(c *gin.Context) {
 func GetPostListHandler(c *gin.Context) {
 	var post models.PostReq
 
-	if err := c.ShouldBindJSON(&post); err != nil {
+	if err := c.ShouldBind(&post); err != nil {
 		response.Error(c, response.CodeInvalidParams)
 		zap.L().Error(err.Error())
 		return
