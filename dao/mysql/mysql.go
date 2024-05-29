@@ -37,6 +37,6 @@ func Init(cfg *settings.MySQLConfig) (err error) {
 	//sets the maximum amount of time a connection may be reused.
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
-	db.AutoMigrate(&models.User{}, &models.Community{}, &models.CommunityDetail{}, &models.Post{})
+	db.AutoMigrate(&models.User{}, &models.Community{}, &models.CommunityDetail{}, &models.Post{}, &models.Comment{})
 	return
 }
