@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/sony/sonyflake"
+	"go.uber.org/zap"
 )
 
 var (
@@ -28,6 +29,7 @@ func Init(machineid uint16) (err error) {
 func GetId() (id uint64, err error) {
 	if sonyFlake == nil {
 		err = fmt.Errorf("sony flake not inited")
+		zap.L().Error(err.Error())
 		return
 	}
 
